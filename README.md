@@ -5,7 +5,7 @@
 
 ### Clonar repo
 
-Asegúrate de que Docker esté corriendo y de preferencia no haya contenedores cargados e ingresa el siguiente comando:
+### Asegúrate de que Docker esté corriendo y de preferencia no haya contenedores cargados e ingresa el siguiente comando:
 
 ```bash
 docker run --rm \
