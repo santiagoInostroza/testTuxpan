@@ -1,66 +1,113 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Intrucciones de instalación
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Clonar repo
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Asegúrate de que Docker esté corriendo y de preferencia no haya contenedores cargados e ingresa el siguiente comando:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+docker run --rm \
+-u "$(id -u):$(id -g)" \
+-v $(pwd):/var/www/html \
+-w /var/www/html \
+laravelsail/php81-composer:latest \
+composer install --ignore-platform-reqs
+```
 
-## Learning Laravel
+### Agregr al .env
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```DB_HOST=mysql
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
+### Correr Sail y migraciones
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```
+./vendor/bin/sail up
+./vendor/bin/sail artisan migrate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Documentación Postman para realizar pruebas
 
-### Premium Partners
+### GET - Obtener CSRF
+- **Método**: GET
+- **Endpoint**: `http://localhost/sanctum/csrf-cookie`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### POST - Registrar usuario
+- **Método**: POST
+- **Endpoint**: `http://localhost/api/register`
+- **Cuerpo de la solicitud**:
+  ```json
+  {
+      "name": "santiago",
+      "email": "santiago@gmail.com",
+      "password": "123456789",
+      "password_confirmation": "123456789"
+  }
+  ```
 
-## Contributing
+  ### POST - Iniciar sesión de usuario
+- **Método**: POST
+- **Endpoint**: `http://localhost/api/login`
+- **Cuerpo de la solicitud**:
+  ```json
+  {
+      "email": "santiago@gmail.com",
+      "password": "123456789"
+  }
+  ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### POST - Crear tarea
+- **Método**: POST
+- **Endpoint**: `http://localhost/api/tasks`
+- **Autorización**:
+  - **Tipo**: Bearer Token
+  - **Token**: `2|PV3eDdD3BWAs0Be4hFP1yxvtewrWoC2PptiIp4cF93d14445`
+- **Cuerpo de la solicitud**:
+  ```json
+  {
+      "title": "Nueva tarea",
+      "description": "Esta es una nueva tarea",
+      "user_id": 1
+  }
+  ```
 
-## Code of Conduct
+### GET - Obtener tareas
+- **Método**: GET
+- **Endpoint**: `http://localhost/api/tasks`
+- **Autorización**:
+  - **Tipo**: Bearer Token
+  - **Token**: `2|PV3eDdD3BWAs0Be4hFP1yxvtewrWoC2PptiIp4cF93d14445`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+### GET - Obtener tarea
+- **Método**: GET
+- **Endpoint**: `http://localhost/api/tasks/1`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### PUT - Actualizar tarea
+- **Método**: PUT
+- **Endpoint**: `http://localhost/api/tasks/1`
+- **Autorización**:
+  - **Tipo**: Bearer Token
+  - **Token**: `2|PV3eDdD3BWAs0Be4hFP1yxvtewrWoC2PptiIp4cF93d14445`
+- **Cuerpo de la solicitud**:
+  ```json
+  {
+      "title": "Tarea actualizada",
+      "description": "Esta es una tarea actualizada",
+      "user_id": 1
+  }
+  ```
 
-## License
+### DELETE - Eliminar tarea
+- **Método**: DELETE
+- **Endpoint**: `http://localhost/api/tasks/1`
+- **Autorización**:
+  - **Tipo**: Bearer Token
+  - **Token**: `2|PV3eDdD3BWAs0Be4hFP1yxvtewrWoC2PptiIp4cF93d14445`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
